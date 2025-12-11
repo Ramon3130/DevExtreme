@@ -107,7 +107,6 @@ const runExecutor: PromiseExecutor<BuildTypescriptExecutorSchema> = async (optio
     const finalCompilerOptions: ts.CompilerOptions = {
       ...parsedConfig.options,
       outDir: compilerOptions.outDir,
-      paths: {},
     };
 
     const program = compile(sourceFiles, finalCompilerOptions);
