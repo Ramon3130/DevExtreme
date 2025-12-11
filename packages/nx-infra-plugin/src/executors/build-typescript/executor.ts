@@ -1,6 +1,7 @@
 import { PromiseExecutor, logger } from '@nx/devkit';
 import * as ts from 'typescript';
 import * as path from 'path';
+import sh from 'shelljs';
 import { glob } from 'glob';
 import { BuildTypescriptExecutorSchema } from './schema';
 import { TsConfig, CompilerOptions } from '../../utils/types';
@@ -54,6 +55,8 @@ function compile(sourceFiles: string[], compilerOptions: ts.CompilerOptions): ts
 }
 
 const runExecutor: PromiseExecutor<BuildTypescriptExecutorSchema> = async (options, context) => {
+  console.log('🚀 ~ runExecutor ~ context:', context);
+
   const absoluteProjectRoot = resolveProjectPath(context);
   const module = options.module || DEFAULT_MODULE_TYPE;
 
@@ -108,6 +111,20 @@ const runExecutor: PromiseExecutor<BuildTypescriptExecutorSchema> = async (optio
       ...parsedConfig.options,
       outDir: compilerOptions.outDir,
     };
+
+    console.log('🚀 ~ runExecutor ~ parsedConfig.options:', parsedConfig.options);
+    console.log('🚀 ~ runExecutor ~ finalCompilerOptions:', finalCompilerOptions);
+
+    console.log('pwd:', sh.pwd());
+
+    try {
+      sh.ls('-la', path.resolve('../'));
+      sh.ls('-la', path.resolve('../devextreme/'));
+      sh.ls('-la', path.resolve('../devextreme/artifacts/'));
+      sh.ls('-la', path.resolve('../devextreme/artifacts/npm'));
+      sh.ls('-la', path.resolve('../devextreme/artifacts/npm/devextreme'));
+      sh.ls('-la', path.resolve('../devextreme/artifacts/npm/devextreme/ui/accordion'));
+    } catch (error) {}
 
     const program = compile(sourceFiles, finalCompilerOptions);
     const result = program.emit();
