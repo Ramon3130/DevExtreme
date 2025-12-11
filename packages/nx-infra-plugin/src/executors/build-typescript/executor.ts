@@ -110,6 +110,7 @@ const runExecutor: PromiseExecutor<BuildTypescriptExecutorSchema> = async (optio
     const finalCompilerOptions: ts.CompilerOptions = {
       ...parsedConfig.options,
       outDir: compilerOptions.outDir,
+      paths: {},
     };
 
     console.log('🚀 ~ runExecutor ~ parsedConfig.options:', parsedConfig.options);
