@@ -47,5 +47,7 @@ jobs:
         if: ${{ env.SET_TIMESTAMP_VERSION == 'true' }}
         run: pnpx ts-node tools/scripts/set-timestamp-version
 
-      - name: Build react
-        run: pnpm --workspace-root nx build devextreme-react
+      - name: Build npm packages
+        env:
+          BUILD_INTERNAL_PACKAGE: true
+        run: pnpm run all:build
