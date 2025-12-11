@@ -5,6 +5,10 @@ import { NPM_DIR } from './common/paths';
 
 const [,, name] = process.argv;
 const outputPath = getProject(name).data?.targets?.build?.options?.outputPath;
+
+console.log("🚀 ~ getProject(name):", getProject(name));
+console.log("🚀 ~ outputPath:", outputPath);
+
 assert(
   !!outputPath,
   `Could not find "build.options.outputPath" of project "${name}". Is project.json configured  correctly?`
