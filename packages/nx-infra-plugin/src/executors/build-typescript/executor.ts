@@ -55,7 +55,7 @@ function compile(sourceFiles: string[], compilerOptions: ts.CompilerOptions): ts
 }
 
 const runExecutor: PromiseExecutor<BuildTypescriptExecutorSchema> = async (options, context) => {
-  console.log('🚀 ~ runExecutor ~ context:', context);
+  // console.log('🚀 ~ runExecutor ~ context:', context);
 
   const absoluteProjectRoot = resolveProjectPath(context);
   const module = options.module || DEFAULT_MODULE_TYPE;
