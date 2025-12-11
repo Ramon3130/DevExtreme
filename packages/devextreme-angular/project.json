@@ -3,7 +3,6 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/devextreme-angular",
   "projectType": "library",
-  "implicitDependencies": ["devextreme"],
   "targets": {
     "clean:src-ui": {
       "executor": "devextreme-nx-infra-plugin:clean",
