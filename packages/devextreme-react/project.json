@@ -146,7 +146,6 @@
     },
     "pack": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
       "options": {
         "commands": [
           "pnpm --workspace-root nx build devextreme-react",
