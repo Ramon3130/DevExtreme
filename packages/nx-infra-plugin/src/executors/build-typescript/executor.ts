@@ -121,7 +121,7 @@ const runExecutor: PromiseExecutor<BuildTypescriptExecutorSchema> = async (optio
       sh.ls('-la', path.resolve('../'));
       sh.ls('-la', path.resolve('../devextreme/'));
       sh.ls('-la', path.resolve('../devextreme/artifacts/'));
-      sh.ls('-la', path.resolve('../devextreme/artifacts/npm'));
+      console.log(sh.ls('-la', path.resolve('../devextreme/artifacts/npm')));
       sh.ls('-la', path.resolve('../devextreme/artifacts/npm/devextreme'));
       sh.ls('-la', path.resolve('../devextreme/artifacts/npm/devextreme/ui/accordion'));
     } catch (error) {}
