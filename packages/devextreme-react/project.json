@@ -127,7 +127,6 @@
     },
     "build": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
       "options": {
         "commands": [
           "pnpm --workspace-root nx clean:npm devextreme-react",
