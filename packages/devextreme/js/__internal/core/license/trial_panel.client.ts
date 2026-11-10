@@ -30,6 +30,7 @@ const SafeHTMLElement = isClient()
   : class { } as any as typeof HTMLElement;
 
 const DATA_PERMANENT_ATTRIBUTE = 'data-permanent';
+const DATA_CLOSED_ATTRIBUTE = 'data-closed';
 const componentNames = {
   trigger: 'dx-license-trigger',
   panel: 'dx-license',
@@ -333,11 +334,16 @@ class DxLicense extends SafeHTMLElement {
 
     button.onclick = (): void => {
       DxLicense.closed = true;
-      this.style.cssText = createImportantStyles({
-        display: 'none',
-      });
+      this.setAttribute(DATA_CLOSED_ATTRIBUTE, '');
+      this._hide();
     };
     return button;
+  }
+
+  private _hide(): void {
+    this.style.cssText = createImportantStyles({
+      display: 'none',
+    });
   }
 
   public setTrialExpired(trigger: Element): void {
@@ -410,7 +416,17 @@ class DxLicense extends SafeHTMLElement {
 
   public connectedCallback(): void {
     this._expired = this._expired || isTrialExpired(this);
-    this._reassignComponent();
+    // data-closed: the panel was closed before this element was upgraded (a panel rendered on the server)
+    // or before it was connected again. A closed panel stays hidden;
+    // only the trial expired overlay is shown regardless.
+    if (!this._expired && this.hasAttribute(DATA_CLOSED_ATTRIBUTE)) {
+      DxLicense.closed = true;
+    }
+    if (DxLicense.closed && !this._expired) {
+      this._hide();
+    } else {
+      this._reassignComponent();
+    }
     if (!this._observer) {
       this._observer = new MutationObserver(() => {
         if (DxLicense.closed && !this._expired) {
@@ -533,3 +549,24 @@ export function renderTrialPanel(
 
   document.body.appendChild(trialPanelTrigger);
 }
+
+/*
+ * Problem: a closed trial panel reappears when the custom elements are registered later.
+ *
+ * Some products (for example, ASP.NET Web Forms) render the dx-license panel on the server as plain HTML, so the
+ * panel is visible before this script runs. Its close button can only hide the element (display: none). When this
+ * script registers the custom elements afterwards, the existing dx-license element is upgraded, and
+ * connectedCallback() calls _reassignComponent(), which restores the visible styles. DxLicense.closed is still
+ * false, so the panel stays visible for the following triggers too. The same happens when a closed panel is
+ * connected to the document again (for example, a data-permanent panel kept during Blazor enhanced navigation).
+ *
+ * Steps:
+ * 1. A page shows a server-rendered <dx-license> panel (not expired).
+ * 2. The user closes it.
+ * 3. A DevExtreme widget loads and calls registerCustomComponents().
+ * Result: the panel is shown again. Expected: it stays hidden.
+ *
+ * Fix: closing the panel (here or in the server-rendered markup) sets the data-closed attribute. connectedCallback()
+ * treats a non-expired panel with data-closed as closed (DxLicense.closed = true) and keeps it hidden instead of
+ * rebuilding it. The trial expired overlay is still shown regardless of data-closed.
+ */
